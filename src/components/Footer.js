@@ -1,11 +1,13 @@
+import logo from '../assets/Logo.svg';
+
 function Footer() {
   return (
-    <footer>
-      <img src="/logo192.png" alt="Little Lemon logo" width="80" />
+    <footer className="footer">
+      <img className="footer-logo" src={logo} alt="Little Lemon logo" />
 
       <nav aria-label="Footer navigation">
         <h3>Doormat Navigation</h3>
-        <ul>
+        <ul className="footer-nav-list">
           <li><a href="#">Home</a></li>
           <li><a href="#">About</a></li>
           <li><a href="#">Menu</a></li>
@@ -24,7 +26,7 @@ function Footer() {
 
       <section aria-label="Social Media Links">
         <h3>Social Media Links</h3>
-        <ul>
+        <ul className="footer-social-list">
           <li><a href="#">Facebook</a></li>
           <li><a href="#">Instagram</a></li>
           <li><a href="#">Twitter</a></li>

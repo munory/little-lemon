@@ -1,13 +1,38 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  --color-green:  #495E57;
+  --color-yellow: #F4CE14;
+  --color-salmon: #EE9972;
+  --color-peach:  #FBDABB;
+  --color-gray:   #EDEFEE;
+  --color-dark:   #333333;
+  --color-white:  #FFFFFF;
+
+  --font-display: 'Markazi Text', serif;
+  --font-body:    'Karla', sans-serif;
+
+  /* Centering: keeps content ≤1100px wide with equal side margins */
+  --page-h-padding: max(40px, calc((100vw - 1100px) / 2));
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+}
+
+ul  { list-style: none; }
+a   { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }

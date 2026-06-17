@@ -1,10 +1,11 @@
+import logo from '../assets/Logo.svg';
 import Nav from './Nav';
 
-function Header() {
+function Header({ onNavigate }) {
   return (
-    <header>
-      <img src="/logo192.png" alt="Little Lemon logo" width="50" />
-      <Nav />
+    <header className="header">
+      <img className="header-logo" src={logo} alt="Little Lemon logo" />
+      <Nav onNavigate={onNavigate} />
     </header>
   );
 }
