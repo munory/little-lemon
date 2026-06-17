@@ -1,20 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useReducer } from 'react';
 import heroImage from '../assets/restaurant.jpg';
+import { initializeTimes, updateTimes } from '../utils/bookingUtils';
 
 const OCCASIONS = ['Birthday', 'Anniversary', 'Date', 'Business meal', 'Other'];
 
-function getMinTime() {
-  const now = new Date();
-  const totalMinutes = now.getHours() * 60 + now.getMinutes();
-  const rounded = Math.ceil(totalMinutes / 30) * 30;
-  const h = Math.floor(rounded / 60);
-  const m = rounded % 60;
-  if (h >= 24) return '23:30';
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
 function BookingForm({ draft, onContinue, onBack }) {
   const today = new Date().toISOString().split('T')[0];
+
+  const initialDate = draft?.date ? new Date(draft.date + 'T00:00:00') : new Date();
+  const [availableTimes, dispatch] = useReducer(updateTimes, initialDate, initializeTimes);
 
   const [date, setDate] = useState(draft?.date ?? '');
   const [time, setTime] = useState(draft?.time ?? '');
@@ -25,40 +19,23 @@ function BookingForm({ draft, onContinue, onBack }) {
     specialRequests: draft?.specialRequests ?? '',
   });
   const [occasionOpen, setOccasionOpen] = useState(false);
-  const [timeError, setTimeError] = useState('');
 
   const dateInputRef = useRef(null);
-  const timeInputRef = useRef(null);
   const set = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
 
-  const minTime = date === today ? getMinTime() : '';
-
-  const isTimePast = (t) => date === today && t && t < getMinTime();
-  const isFormValid = date && time && !isTimePast(time);
+  const isFormValid = date && time;
 
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     setDate(newDate);
-    if (newDate === today && time && time < getMinTime()) {
-      setTime('');
-      setTimeError('');
-    } else {
-      setTimeError('');
+    setTime('');
+    if (newDate) {
+      dispatch({ date: new Date(newDate + 'T00:00:00') });
     }
-  };
-
-  const handleTimeChange = (e) => {
-    const val = e.target.value;
-    setTime(val);
-    setTimeError(isTimePast(val) ? 'Please select a future time' : '');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isTimePast(time)) {
-      setTimeError('Please select a future time');
-      return;
-    }
     onContinue(
       { ...formData, date, time },
       { date, time, ...formData }
@@ -112,30 +89,21 @@ function BookingForm({ draft, onContinue, onBack }) {
           <div className="booking-section">
             <div className="form-group">
               <label htmlFor="time">Time</label>
-              <div className="input-icon-wrap">
-                <input
-                  ref={timeInputRef}
-                  type="time"
+              {availableTimes.length > 0 ? (
+                <select
                   id="time"
                   value={time}
-                  min={minTime}
-                  step="1800"
-                  onChange={handleTimeChange}
+                  onChange={(e) => setTime(e.target.value)}
                   required
-                />
-                <button
-                  type="button"
-                  className="input-icon-btn"
-                  aria-label="Open time picker"
-                  onClick={() => timeInputRef.current?.showPicker()}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                  </svg>
-                </button>
-              </div>
-              {timeError && <p className="field-error">{timeError}</p>}
+                  <option value="">Select a time</option>
+                  {availableTimes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              ) : (
+                <p className="field-error">No available times for this date</p>
+              )}
             </div>
           </div>
 

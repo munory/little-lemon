@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import BookingForm from './components/BookingForm';
 import BookingSummary from './components/BookingSummary';
 import BookingConfirmed from './components/BookingConfirmed';
+import { submitReservation } from './utils/bookingUtils';
 
 function App() {
   const [page, setPage] = useState('home');
@@ -18,9 +19,12 @@ function App() {
     setPage('summary');
   };
 
-  const handleConfirm = (fullData) => {
-    setReservationData(fullData);
-    setPage('confirmed');
+  const submitForm = (fullData) => {
+    const success = submitReservation(fullData);
+    if (success) {
+      setReservationData(fullData);
+      setPage('confirmed');
+    }
   };
 
   return (
@@ -42,7 +46,7 @@ function App() {
       {page === 'summary' && (
         <BookingSummary
           bookingData={reservationData}
-          onConfirm={handleConfirm}
+          onConfirm={submitForm}
           onBack={() => setPage('booking')}
         />
       )}
