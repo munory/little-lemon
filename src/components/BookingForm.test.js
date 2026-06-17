@@ -11,7 +11,7 @@ beforeEach(() => {
   window.fetchAPI = jest.fn().mockReturnValue(['17:00', '18:00', '19:00', '20:00', '21:00']);
 });
 
-describe('BookingForm', () => {
+describe('BookingForm — rendering', () => {
   test('renders heading "Reserve a Table"', () => {
     render(<BookingForm {...mockProps} />);
     expect(screen.getByText('Reserve a Table')).toBeInTheDocument();
@@ -28,13 +28,68 @@ describe('BookingForm', () => {
     expect(screen.getByText('17:00')).toBeInTheDocument();
     expect(screen.getByText('21:00')).toBeInTheDocument();
   });
+});
 
-  test('Continue button is disabled when date and time are empty', () => {
+describe('BookingForm — HTML5 validation attributes', () => {
+  test('date input has required attribute', () => {
+    render(<BookingForm {...mockProps} />);
+    expect(screen.getByLabelText('Date')).toBeRequired();
+  });
+
+  test('date input has min set to today', () => {
+    render(<BookingForm {...mockProps} />);
+    const today = new Date().toISOString().split('T')[0];
+    expect(screen.getByLabelText('Date')).toHaveAttribute('min', today);
+  });
+
+  test('time select has required attribute', () => {
+    render(<BookingForm {...mockProps} />);
+    expect(screen.getByLabelText('Time')).toBeRequired();
+  });
+
+  test('special requests textarea has maxLength of 500', () => {
+    render(<BookingForm {...mockProps} />);
+    expect(screen.getByLabelText(/special requests/i)).toHaveAttribute('maxlength', '500');
+  });
+});
+
+describe('BookingForm — guests counter validation', () => {
+  test('decrease button is disabled when guests equals 1', () => {
+    render(<BookingForm {...mockProps} draft={{ guests: 1 }} />);
+    expect(screen.getByLabelText('Decrease guests')).toBeDisabled();
+  });
+
+  test('increase button is disabled when guests equals 20', () => {
+    render(<BookingForm {...mockProps} draft={{ guests: 20 }} />);
+    expect(screen.getByLabelText('Increase guests')).toBeDisabled();
+  });
+
+  test('both counter buttons are enabled when guests is in valid range', () => {
+    render(<BookingForm {...mockProps} />);
+    expect(screen.getByLabelText('Decrease guests')).not.toBeDisabled();
+    expect(screen.getByLabelText('Increase guests')).not.toBeDisabled();
+  });
+});
+
+describe('BookingForm — Continue button validation', () => {
+  test('Continue is disabled when date and time are empty', () => {
     render(<BookingForm {...mockProps} />);
     expect(screen.getByText('Continue')).toBeDisabled();
   });
 
-  test('Continue button enables after selecting a date and time', () => {
+  test('Continue is disabled when only date is filled', () => {
+    render(<BookingForm {...mockProps} />);
+    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2099-12-31' } });
+    expect(screen.getByText('Continue')).toBeDisabled();
+  });
+
+  test('Continue is disabled when only time is filled', () => {
+    render(<BookingForm {...mockProps} />);
+    fireEvent.change(screen.getByLabelText('Time'), { target: { value: '19:00' } });
+    expect(screen.getByText('Continue')).toBeDisabled();
+  });
+
+  test('Continue is enabled when both date and time are filled', () => {
     render(<BookingForm {...mockProps} />);
     fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2099-12-31' } });
     fireEvent.change(screen.getByLabelText('Time'), { target: { value: '19:00' } });

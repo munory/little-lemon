@@ -29,7 +29,7 @@ function App() {
 
   return (
     <>
-      <Header onNavigate={setPage} />
+      <Header onNavigate={setPage} currentPage={page} />
 
       {page === 'home' && (
         <Main onReserve={() => setPage('booking')} />

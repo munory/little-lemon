@@ -113,9 +113,16 @@ function BookingForm({ draft, onContinue, onBack }) {
               <label htmlFor="guests">Guests</label>
               <div className="guests-counter" role="group" aria-label="Number of guests">
                 <button type="button" aria-label="Decrease guests"
+                  disabled={formData.guests <= 1}
                   onClick={() => set('guests', Math.max(1, formData.guests - 1))}>−</button>
-                <span aria-live="polite">{formData.guests}</span>
+                <span
+                  aria-live="polite"
+                  aria-valuemin="1"
+                  aria-valuemax="20"
+                  aria-valuenow={formData.guests}
+                >{formData.guests}</span>
                 <button type="button" aria-label="Increase guests"
+                  disabled={formData.guests >= 20}
                   onClick={() => set('guests', Math.min(20, formData.guests + 1))}>+</button>
               </div>
             </div>
@@ -186,6 +193,7 @@ function BookingForm({ draft, onContinue, onBack }) {
                 id="specialRequests"
                 name="specialRequests"
                 rows="4"
+                maxLength={500}
                 placeholder="Any dietary requirements or special requests..."
                 value={formData.specialRequests}
                 onChange={(e) => set('specialRequests', e.target.value)}
