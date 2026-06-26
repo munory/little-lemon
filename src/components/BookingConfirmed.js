@@ -59,7 +59,7 @@ function BookingConfirmed({ reservationData, onBackHome, onViewMenu }) {
         </div>
 
         <div className="confirmed-actions">
-          <button className="btn-primary" onClick={onBackHome}>Back to Home</button>
+          <button className="btn-primary" onClick={onBackHome}>Home</button>
           <button className="btn-outline" onClick={onViewMenu}>View Menu</button>
         </div>
       </section>

@@ -1,66 +1,74 @@
 import { useState } from 'react';
 import './App.css';
+import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
-import BookingForm from './components/BookingForm';
-import BookingSummary from './components/BookingSummary';
+import ReservationFlow from './components/ReservationFlow';
 import BookingConfirmed from './components/BookingConfirmed';
+import CheckoutPage from './components/CheckoutPage';
+import CheckoutSuccess from './components/CheckoutSuccess';
+import MenuPage from './components/MenuPage';
+import CartDrawer from './components/CartDrawer';
+import CartToast from './components/CartToast';
 import { submitReservation } from './utils/bookingUtils';
 
 function App() {
   const [page, setPage] = useState('home');
-  const [reservationData, setReservationData] = useState({});
-  const [bookingDraft, setBookingDraft] = useState(null);
+  const [confirmedData, setConfirmedData] = useState(null);
 
-  const handleBookingContinue = (formData, draft) => {
-    setBookingDraft(draft);
-    setReservationData(formData);
-    setPage('summary');
-  };
-
-  const submitForm = (fullData) => {
+  const handleReservationComplete = (fullData) => {
     const success = submitReservation(fullData);
     if (success) {
-      setReservationData(fullData);
+      setConfirmedData(fullData);
       setPage('confirmed');
     }
   };
 
+  const showFooter = page !== 'checkout' && page !== 'checkout-success' && page !== 'menu';
+
   return (
-    <>
+    <CartProvider>
       <Header onNavigate={setPage} currentPage={page} />
 
       {page === 'home' && (
-        <Main onReserve={() => setPage('booking')} />
+        <Main onReserve={() => setPage('booking')} onMenu={() => setPage('menu')} />
+      )}
+
+      {page === 'menu' && (
+        <MenuPage />
       )}
 
       {page === 'booking' && (
-        <BookingForm
-          draft={bookingDraft}
-          onContinue={handleBookingContinue}
-          onBack={(draft) => { setBookingDraft(draft); setPage('home'); }}
-        />
-      )}
-
-      {page === 'summary' && (
-        <BookingSummary
-          bookingData={reservationData}
-          onConfirm={submitForm}
-          onBack={() => setPage('booking')}
+        <ReservationFlow
+          onComplete={handleReservationComplete}
+          onCancel={() => setPage('home')}
         />
       )}
 
       {page === 'confirmed' && (
         <BookingConfirmed
-          reservationData={reservationData}
+          reservationData={confirmedData}
           onBackHome={() => setPage('home')}
-          onViewMenu={() => setPage('home')}
+          onViewMenu={() => setPage('menu')}
         />
       )}
 
-      <Footer />
-    </>
+      {page === 'checkout' && (
+        <CheckoutPage
+          onSuccess={() => setPage('checkout-success')}
+          onBack={() => setPage('home')}
+        />
+      )}
+
+      {page === 'checkout-success' && (
+        <CheckoutSuccess onBackHome={() => setPage('home')} />
+      )}
+
+      {showFooter && <Footer />}
+      <CartDrawer onCheckout={() => setPage('checkout')} />
+      <CartToast />
+    </CartProvider>
   );
 }
 

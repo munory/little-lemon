@@ -4,42 +4,35 @@ import { initializeTimes, updateTimes } from '../utils/bookingUtils';
 
 const OCCASIONS = ['Birthday', 'Anniversary', 'Date', 'Business meal', 'Other'];
 
-function BookingForm({ draft, onContinue, onBack }) {
+function BookingForm({
+  date, onDateChange,
+  time, onTimeChange,
+  guests, onGuestsChange,
+  seating, onSeatingChange,
+  occasion, onOccasionChange,
+  specialRequests, onSpecialRequestsChange,
+  onContinue, onBack,
+}) {
   const today = new Date().toISOString().split('T')[0];
 
-  const initialDate = draft?.date ? new Date(draft.date + 'T00:00:00') : new Date();
+  const initialDate = date ? new Date(date + 'T00:00:00') : new Date();
   const [availableTimes, dispatch] = useReducer(updateTimes, initialDate, initializeTimes);
-
-  const [date, setDate] = useState(draft?.date ?? '');
-  const [time, setTime] = useState(draft?.time ?? '');
-  const [formData, setFormData] = useState({
-    guests: draft?.guests ?? 2,
-    seating: draft?.seating ?? 'indoors',
-    occasion: draft?.occasion ?? '',
-    specialRequests: draft?.specialRequests ?? '',
-  });
   const [occasionOpen, setOccasionOpen] = useState(false);
 
   const dateInputRef = useRef(null);
-  const set = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
 
   const isFormValid = date && time;
 
   const handleDateChange = (e) => {
     const newDate = e.target.value;
-    setDate(newDate);
-    setTime('');
-    if (newDate) {
-      dispatch({ date: new Date(newDate + 'T00:00:00') });
-    }
+    onDateChange(newDate);
+    onTimeChange('');
+    if (newDate) dispatch({ date: new Date(newDate + 'T00:00:00') });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onContinue(
-      { ...formData, date, time },
-      { date, time, ...formData }
-    );
+    onContinue();
   };
 
   return (
@@ -93,7 +86,7 @@ function BookingForm({ draft, onContinue, onBack }) {
                 <select
                   id="time"
                   value={time}
-                  onChange={(e) => setTime(e.target.value)}
+                  onChange={(e) => onTimeChange(e.target.value)}
                   required
                 >
                   <option value="">Select a time</option>
@@ -113,17 +106,17 @@ function BookingForm({ draft, onContinue, onBack }) {
               <label htmlFor="guests">Guests</label>
               <div className="guests-counter" role="group" aria-label="Number of guests">
                 <button type="button" aria-label="Decrease guests"
-                  disabled={formData.guests <= 1}
-                  onClick={() => set('guests', Math.max(1, formData.guests - 1))}>−</button>
+                  disabled={guests <= 1}
+                  onClick={() => onGuestsChange(Math.max(1, guests - 1))}>−</button>
                 <span
                   aria-live="polite"
                   aria-valuemin="1"
                   aria-valuemax="20"
-                  aria-valuenow={formData.guests}
-                >{formData.guests}</span>
+                  aria-valuenow={guests}
+                >{guests}</span>
                 <button type="button" aria-label="Increase guests"
-                  disabled={formData.guests >= 20}
-                  onClick={() => set('guests', Math.min(20, formData.guests + 1))}>+</button>
+                  disabled={guests >= 20}
+                  onClick={() => onGuestsChange(Math.min(20, guests + 1))}>+</button>
               </div>
             </div>
           </div>
@@ -135,15 +128,15 @@ function BookingForm({ draft, onContinue, onBack }) {
               <div className="seating-toggle" role="group" aria-labelledby="seating-label">
                 <button
                   type="button"
-                  className={formData.seating === 'indoors' ? 'active' : ''}
-                  aria-pressed={formData.seating === 'indoors'}
-                  onClick={() => set('seating', 'indoors')}
+                  className={seating === 'indoors' ? 'active' : ''}
+                  aria-pressed={seating === 'indoors'}
+                  onClick={() => onSeatingChange('indoors')}
                 >Indoors</button>
                 <button
                   type="button"
-                  className={formData.seating === 'outdoors' ? 'active' : ''}
-                  aria-pressed={formData.seating === 'outdoors'}
-                  onClick={() => set('seating', 'outdoors')}
+                  className={seating === 'outdoors' ? 'active' : ''}
+                  aria-pressed={seating === 'outdoors'}
+                  onClick={() => onSeatingChange('outdoors')}
                 >Outdoors</button>
               </div>
             </div>
@@ -156,24 +149,24 @@ function BookingForm({ draft, onContinue, onBack }) {
               <div className="occasion-dropdown">
                 <button
                   type="button"
-                  className={`occasion-trigger${formData.occasion ? ' occasion-trigger--selected' : ''}`}
+                  className={`occasion-trigger${occasion ? ' occasion-trigger--selected' : ''}`}
                   onClick={() => setOccasionOpen(!occasionOpen)}
                   aria-expanded={occasionOpen}
                   aria-haspopup="listbox"
                 >
                   <span className="occasion-trigger-label">
-                    {formData.occasion || 'Select occasion'}
+                    {occasion || 'Select occasion'}
                   </span>
                   <span className="occasion-chevron">{occasionOpen ? '▲' : '▼'}</span>
                 </button>
                 {occasionOpen && (
                   <ul className="occasion-list" role="listbox">
                     {OCCASIONS.map((o) => (
-                      <li key={o} role="option" aria-selected={formData.occasion === o}>
+                      <li key={o} role="option" aria-selected={occasion === o}>
                         <button
                           type="button"
-                          className={`occasion-option${formData.occasion === o ? ' active' : ''}`}
-                          onClick={() => { set('occasion', o); setOccasionOpen(false); }}
+                          className={`occasion-option${occasion === o ? ' active' : ''}`}
+                          onClick={() => { onOccasionChange(o); setOccasionOpen(false); }}
                         >
                           {o}
                         </button>
@@ -195,8 +188,8 @@ function BookingForm({ draft, onContinue, onBack }) {
                 rows="4"
                 maxLength={500}
                 placeholder="Any dietary requirements or special requests..."
-                value={formData.specialRequests}
-                onChange={(e) => set('specialRequests', e.target.value)}
+                value={specialRequests}
+                onChange={(e) => onSpecialRequestsChange(e.target.value)}
               />
             </div>
           </div>
@@ -205,7 +198,7 @@ function BookingForm({ draft, onContinue, onBack }) {
             <button
               type="button"
               className="btn-booking-back"
-              onClick={() => onBack({ date, time, ...formData })}
+              onClick={onBack}
             >
               Back
             </button>

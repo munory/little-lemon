@@ -13,8 +13,11 @@ function Nav({ onNavigate, currentPage }) {
           <a className="nav-link" href="#" onClick={(e) => handle(e, 'home')}
             aria-current={isCurrent('home') ? 'page' : undefined}>Home</a>
         </li>
-        <li><a className="nav-link" href="#">About</a></li>
-        <li><a className="nav-link" href="#">Menu</a></li>
+        <li><a className="nav-link" href="#about" onClick={(e) => { if (currentPage !== 'home') { e.preventDefault(); onNavigate('home'); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 100); } }}>About</a></li>
+        <li>
+          <a className="nav-link" href="#" onClick={(e) => handle(e, 'menu')}
+            aria-current={isCurrent('menu') ? 'page' : undefined}>Menu</a>
+        </li>
         <li>
           <a className="nav-link" href="#" onClick={(e) => handle(e, 'booking')}
             aria-current={isCurrent('booking') ? 'page' : undefined}>Reservations</a>

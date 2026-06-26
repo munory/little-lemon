@@ -54,20 +54,23 @@ function CustomSelect({ value, options, onChange, placeholder }) {
   );
 }
 
-function BookingSummary({ bookingData, onConfirm, onBack }) {
+function BookingSummary({ bookingData, onBookingDataSave, contact, onContactChange, onConfirm, onBack }) {
   const [isEditing, setIsEditing] = useState(false);
   const [edited, setEdited] = useState({ ...bookingData });
-  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '' });
 
   const today = new Date().toISOString().split('T')[0];
   const setEdit = (field, value) => setEdited((prev) => ({ ...prev, [field]: value }));
-  const setC = (field, value) => setContact((prev) => ({ ...prev, [field]: value }));
 
   const isFormValid = contact.firstName.trim() && contact.lastName.trim() && contact.email.trim();
 
+  const handleSaveEdits = () => {
+    onBookingDataSave(edited);
+    setIsEditing(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onConfirm({ ...edited, ...contact });
+    onConfirm();
   };
 
   const formatDate = (dateStr) => {
@@ -128,7 +131,7 @@ function BookingSummary({ bookingData, onConfirm, onBack }) {
                     placeholder="None"
                   />
                 </div>
-                <button type="button" className="summary-save-btn" onClick={() => setIsEditing(false)}>
+                <button type="button" className="summary-save-btn" onClick={handleSaveEdits}>
                   Save changes
                 </button>
               </div>
@@ -154,25 +157,25 @@ function BookingSummary({ bookingData, onConfirm, onBack }) {
               <div className="form-group">
                 <label htmlFor="firstName">First Name <span className="required-mark">*</span></label>
                 <input type="text" id="firstName" value={contact.firstName}
-                  onChange={(e) => setC('firstName', e.target.value)} required autoComplete="given-name" />
+                  onChange={(e) => onContactChange('firstName', e.target.value)} required autoComplete="given-name" />
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last Name <span className="required-mark">*</span></label>
                 <input type="text" id="lastName" value={contact.lastName}
-                  onChange={(e) => setC('lastName', e.target.value)} required autoComplete="family-name" />
+                  onChange={(e) => onContactChange('lastName', e.target.value)} required autoComplete="family-name" />
               </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="email">Email <span className="required-mark">*</span></label>
               <input type="email" id="email" value={contact.email}
-                onChange={(e) => setC('email', e.target.value)} required autoComplete="email" />
+                onChange={(e) => onContactChange('email', e.target.value)} required autoComplete="email" />
             </div>
 
             <div className="form-group">
               <label htmlFor="phone">Phone Number</label>
               <input type="tel" id="phone" value={contact.phone}
-                onChange={(e) => setC('phone', e.target.value)} autoComplete="tel" />
+                onChange={(e) => onContactChange('phone', e.target.value)} autoComplete="tel" />
             </div>
 
             <div className="booking-actions">

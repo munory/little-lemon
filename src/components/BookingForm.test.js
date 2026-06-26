@@ -2,7 +2,18 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import BookingForm from './BookingForm';
 
 const mockProps = {
-  draft: null,
+  date: '',
+  onDateChange: jest.fn(),
+  time: '',
+  onTimeChange: jest.fn(),
+  guests: 2,
+  onGuestsChange: jest.fn(),
+  seating: 'indoors',
+  onSeatingChange: jest.fn(),
+  occasion: '',
+  onOccasionChange: jest.fn(),
+  specialRequests: '',
+  onSpecialRequestsChange: jest.fn(),
   onContinue: jest.fn(),
   onBack: jest.fn(),
 };
@@ -55,17 +66,17 @@ describe('BookingForm — HTML5 validation attributes', () => {
 
 describe('BookingForm — guests counter validation', () => {
   test('decrease button is disabled when guests equals 1', () => {
-    render(<BookingForm {...mockProps} draft={{ guests: 1 }} />);
+    render(<BookingForm {...mockProps} guests={1} />);
     expect(screen.getByLabelText('Decrease guests')).toBeDisabled();
   });
 
   test('increase button is disabled when guests equals 20', () => {
-    render(<BookingForm {...mockProps} draft={{ guests: 20 }} />);
+    render(<BookingForm {...mockProps} guests={20} />);
     expect(screen.getByLabelText('Increase guests')).toBeDisabled();
   });
 
   test('both counter buttons are enabled when guests is in valid range', () => {
-    render(<BookingForm {...mockProps} />);
+    render(<BookingForm {...mockProps} guests={2} />);
     expect(screen.getByLabelText('Decrease guests')).not.toBeDisabled();
     expect(screen.getByLabelText('Increase guests')).not.toBeDisabled();
   });
@@ -73,26 +84,22 @@ describe('BookingForm — guests counter validation', () => {
 
 describe('BookingForm — Continue button validation', () => {
   test('Continue is disabled when date and time are empty', () => {
-    render(<BookingForm {...mockProps} />);
+    render(<BookingForm {...mockProps} date="" time="" />);
     expect(screen.getByText('Continue')).toBeDisabled();
   });
 
   test('Continue is disabled when only date is filled', () => {
-    render(<BookingForm {...mockProps} />);
-    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2099-12-31' } });
+    render(<BookingForm {...mockProps} date="2099-12-31" time="" />);
     expect(screen.getByText('Continue')).toBeDisabled();
   });
 
   test('Continue is disabled when only time is filled', () => {
-    render(<BookingForm {...mockProps} />);
-    fireEvent.change(screen.getByLabelText('Time'), { target: { value: '19:00' } });
+    render(<BookingForm {...mockProps} date="" time="19:00" />);
     expect(screen.getByText('Continue')).toBeDisabled();
   });
 
   test('Continue is enabled when both date and time are filled', () => {
-    render(<BookingForm {...mockProps} />);
-    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2099-12-31' } });
-    fireEvent.change(screen.getByLabelText('Time'), { target: { value: '19:00' } });
+    render(<BookingForm {...mockProps} date="2099-12-31" time="19:00" />);
     expect(screen.getByText('Continue')).not.toBeDisabled();
   });
 
