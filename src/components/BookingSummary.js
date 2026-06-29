@@ -25,7 +25,7 @@ function CustomSelect({ value, options, onChange, placeholder }) {
         onClick={() => setOpen((p) => !p)}
         aria-expanded={open}
       >
-        <span style={{ textTransform: 'capitalize' }}>{label}</span>
+        <span className="capitalize">{label}</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points={open ? '18 15 12 9 6 15' : '6 9 12 15 18 9'} />
         </svg>
@@ -143,7 +143,7 @@ function BookingSummary({ bookingData, onBookingDataSave, contact, onContactChan
                 {edited.occasion && <div className="summary-row"><dt>Occasion</dt><dd>{edited.occasion}</dd></div>}
                 <div className="summary-row">
                   <dt>Seating</dt>
-                  <dd style={{ textTransform: 'capitalize' }}>{edited.seating}</dd>
+                  <dd className="capitalize">{edited.seating}</dd>
                 </div>
               </dl>
             )}

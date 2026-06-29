@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useState, useCallback, useRef } from 'react';
+import { MAX_CART_QTY } from '../constants';
 
 const CartContext = createContext({
   items: [],
@@ -25,7 +26,7 @@ function cartReducer(state, action) {
       if (idx >= 0) {
         const updated = [...state];
         const prev = updated[idx];
-        const newQty = Math.min(10, prev.quantity + action.payload.quantity);
+        const newQty = Math.min(MAX_CART_QTY, prev.quantity + action.payload.quantity);
         updated[idx] = {
           ...prev,
           quantity: newQty,
@@ -40,7 +41,7 @@ function cartReducer(state, action) {
     case 'UPDATE_QTY':
       return state.map((item, i) => {
         if (i !== action.index) return item;
-        const newQty = Math.max(1, Math.min(10, action.qty));
+        const newQty = Math.max(1, Math.min(MAX_CART_QTY, action.qty));
         return { ...item, quantity: newQty, itemTotal: parseFloat((item.unitPrice * newQty).toFixed(2)) };
       });
     case 'CLEAR_CART':

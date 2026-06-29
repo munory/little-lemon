@@ -37,7 +37,7 @@ function BookingForm({
 
   return (
     <main className="booking-page">
-      <div className="booking-split-right">
+      <div className="booking-form-container">
 
         <h2 className="booking-page-title">Reserve a Table</h2>
 

@@ -1,4 +1,5 @@
 import logo from '../assets/Logo.svg';
+import { RESTAURANT } from '../constants';
 
 function Footer({ onNavigate }) {
   const handle = (e, page) => {
@@ -36,8 +37,8 @@ function Footer({ onNavigate }) {
 
       <address>
         <h3>Contact</h3>
-        <p>123 Main Street, Chicago, IL</p>
-        <p><a href="tel:+13125550100">+1 (312) 555-0100</a></p>
+        <p>{RESTAURANT.street}, {RESTAURANT.city}, {RESTAURANT.state}</p>
+        <p><a href={`tel:${RESTAURANT.phone.replace(/\s|\(|\)|-/g, '')}`}>{RESTAURANT.phone}</a></p>
         <p><a href="mailto:info@littlelemon.com">info@littlelemon.com</a></p>
       </address>
 

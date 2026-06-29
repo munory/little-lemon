@@ -1,4 +1,9 @@
 /* ─────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────── */
+.capitalize { text-transform: capitalize; }
+
+/* ─────────────────────────────────────────
    HEADER
 ───────────────────────────────────────── */
 
@@ -784,9 +789,9 @@
 }
 
 /* ─────────────────────────────────────────
-   BOOKING FORM (Frame 2) — split layout
+   BOOKING FORM
 ───────────────────────────────────────── */
-.booking-split-right {
+.booking-form-container {
   background: var(--color-white);
   max-width: 720px;
   margin: 0 auto;
@@ -1669,7 +1674,7 @@ button, a, [role="button"], input, select, textarea {
 
   /* Booking */
   .booking-page        { padding-top: 0; padding-bottom: 0; }
-  .booking-split-right { padding-top: 0px; }
+  .booking-form-container { padding-top: 0; }
   .guests-counter               { padding: 0 10px; }
   .guests-counter button        { width: 24px; height: 24px; font-size: 18px; }
   .guests-counter span          { font-size: 15px; }

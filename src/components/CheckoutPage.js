@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { RESTAURANT } from '../constants';
 
 const TAX_RATE  = 0.08;
 const DELIVERY_FEE = 5.00;
@@ -130,7 +131,7 @@ function CheckoutPage({ onSuccess, onBack }) {
             </div>
             {!isDelivery && (
               <p className="co-pickup-note">
-                Ready in ~20 min · <strong>1250 N Dearborn St, Chicago, IL 60610</strong>
+                Ready in ~20 min · <strong>{RESTAURANT.fullAddress}</strong>
               </p>
             )}
           </section>
@@ -166,7 +167,7 @@ function CheckoutPage({ onSuccess, onBack }) {
               <h2 className="co-card-title" id="co-address-heading">Delivery Address</h2>
               <div className="form-group">
                 <label htmlFor="co-street">Street Address <span className="required-mark" aria-hidden="true">*</span></label>
-                <input id="co-street" type="text" className="co-input" value={address.street} onChange={setAddressField('street')} placeholder="1250 N Dearborn St" autoComplete="street-address" required />
+                <input id="co-street" type="text" className="co-input" value={address.street} onChange={setAddressField('street')} placeholder={RESTAURANT.street} autoComplete="street-address" required />
               </div>
               <div className="form-group">
                 <label htmlFor="co-apt">Apt / Suite</label>
