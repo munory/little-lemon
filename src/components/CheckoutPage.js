@@ -33,7 +33,7 @@ function CheckoutPage({ onSuccess, onBack }) {
       cardholderName: user?.payment?.cardName   || '',
       cardNumber:     user?.payment?.cardNumber || '',
       expiry:         user?.payment?.expiry     || '',
-      cvc:            '',
+      cvc:            user?.payment?.cvc || '',
     });
     setAutofillDismissed(true);
   }, [user]);

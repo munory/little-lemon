@@ -84,7 +84,7 @@ function UserMenu({ user, onNavigate }) {
               My Profile
             </button>
             <button role="menuitem" className="user-dropdown-item user-dropdown-logout"
-              onClick={() => { logout(); setOpen(false); }}>
+              onClick={() => { logout(); setOpen(false); onNavigate('home'); }}>
               Logout
             </button>
           </div>
@@ -318,7 +318,7 @@ function Header({ onNavigate, currentPage }) {
         {/* ── 3. Logout at the bottom (only when logged in) ── */}
         {isLoggedIn && (
           <div className="nd-bottom">
-            <button className="nd-logout-btn" onClick={() => { logout(); closeDrawer(); }}>
+            <button className="nd-logout-btn" onClick={() => { logout(); navigate('home'); }}>
               Log Out
             </button>
           </div>

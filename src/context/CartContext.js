@@ -11,6 +11,7 @@ const CartContext = createContext({
   removeItem: () => {},
   updateQty:  () => {},
   clearCart:  () => {},
+  reorder:    () => {},
   openDrawer:  () => {},
   closeDrawer: () => {},
 });
@@ -46,6 +47,8 @@ function cartReducer(state, action) {
       });
     case 'CLEAR_CART':
       return [];
+    case 'REORDER':
+      return action.payload;
     default:
       return state;
   }
@@ -67,6 +70,10 @@ export function CartProvider({ children }) {
   const removeItem = useCallback((index) => dispatch({ type: 'REMOVE_ITEM', index }), []);
   const updateQty  = useCallback((index, qty)  => dispatch({ type: 'UPDATE_QTY', index, qty }), []);
   const clearCart  = useCallback(() => dispatch({ type: 'CLEAR_CART' }), []);
+  const reorder    = useCallback((cartItems) => {
+    dispatch({ type: 'REORDER', payload: cartItems });
+    setIsDrawerOpen(true);
+  }, []);
   const openDrawer  = useCallback(() => setIsDrawerOpen(true),  []);
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
 
@@ -75,7 +82,7 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{ items, totalItems, subtotal, isDrawerOpen, toast, addItem, removeItem, updateQty, clearCart, openDrawer, closeDrawer }}
+      value={{ items, totalItems, subtotal, isDrawerOpen, toast, addItem, removeItem, updateQty, clearCart, reorder, openDrawer, closeDrawer }}
     >
       {children}
     </CartContext.Provider>

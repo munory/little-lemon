@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
         cardName:   'Mario Rossi',
         cardNumber: '4242 4242 4242 4242',
         expiry:     '12/28',
+        cvc:        '123',
       },
     });
     setIsLoggedIn(true);

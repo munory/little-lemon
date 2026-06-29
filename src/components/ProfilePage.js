@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import menuData from '../data/menuData';
 
 const MOCK_RESERVATION = {
   id:      'RES-2847',
@@ -14,18 +16,49 @@ const MOCK_ORDERS = [
     id:    '#LL-8061',
     date:  'June 28, 2026',
     total: '$34.50',
-    items: ['1× Bruschetta', '1× Lemon Dessert', '2× Fresh Lemonade'],
+    cartItems: [
+      { menuId: 101, quantity: 1 },
+      { menuId: 106, quantity: 1 },
+      { menuId: 108, quantity: 2 },
+    ],
   },
   {
     id:    '#LL-7934',
     date:  'June 14, 2026',
     total: '$52.00',
-    items: ['1× Grilled Chicken', '1× Creamy Hummus', '1× Classic Limoncello'],
+    cartItems: [
+      { menuId: 105, quantity: 1 },
+      { menuId: 102, quantity: 1 },
+      { menuId: 109, quantity: 1 },
+    ],
   },
 ];
 
+function buildCartItems(orderCartItems) {
+  return orderCartItems.map(({ menuId, quantity }) => {
+    const dish = menuData.find((d) => d.id === menuId);
+    if (!dish) return null;
+    return {
+      id:        dish.id,
+      name:      dish.name,
+      basePrice: dish.price,
+      size:      'Regular',
+      addOns:    [],
+      quantity,
+      unitPrice: dish.price,
+      itemTotal: parseFloat((dish.price * quantity).toFixed(2)),
+    };
+  }).filter(Boolean);
+}
+
+function orderLabel({ menuId, quantity }) {
+  const dish = menuData.find((d) => d.id === menuId);
+  return dish ? `${quantity}× ${dish.name}` : '';
+}
+
 function ProfilePage({ onNavigate }) {
   const { user, logout } = useAuth();
+  const { reorder } = useCart();
 
   /* ── Profile form ── */
   const profileInit = {
@@ -64,6 +97,7 @@ function ProfilePage({ onNavigate }) {
     cardName:   user?.payment?.cardName   || '',
     cardNumber: user?.payment?.cardNumber || '',
     expiry:     user?.payment?.expiry     || '',
+    cvc:        user?.payment?.cvc        || '',
   };
   const [isEditingPayment, setIsEditingPayment] = useState(false);
   const [paymentForm, setPaymentForm] = useState(paymentInit);
@@ -77,6 +111,10 @@ function ProfilePage({ onNavigate }) {
 
   /* ── Reservation cancel ── */
   const [resCancelled, setResCancelled] = useState(false);
+  const [cancelConfirming, setCancelConfirming] = useState(false);
+
+  /* ── Logout confirm ── */
+  const [logoutConfirming, setLogoutConfirming] = useState(false);
 
   const handleLogout = () => { logout(); onNavigate('home'); };
 
@@ -145,7 +183,23 @@ function ProfilePage({ onNavigate }) {
                   )}
                 </form>
 
-                <button className="ps-logout-btn" onClick={handleLogout}>Log Out</button>
+                <button className="ps-logout-btn" onClick={() => setLogoutConfirming(true)}>
+                  Log Out
+                </button>
+                {logoutConfirming && (
+                  <div className="logout-confirm" role="alert">
+                    <p className="logout-confirm-title">Sign out of your account?</p>
+                    <p className="logout-confirm-note">You'll need to log in again to access your profile.</p>
+                    <div className="logout-confirm-actions">
+                      <button className="logout-confirm-yes" onClick={handleLogout}>
+                        Yes, sign out
+                      </button>
+                      <button className="logout-confirm-no" onClick={() => setLogoutConfirming(false)}>
+                        Stay
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 
@@ -202,10 +256,18 @@ function ProfilePage({ onNavigate }) {
                       <input id="pp-number" type="text" value={paymentForm.cardNumber}
                         onChange={onPaymentChange('cardNumber')} placeholder="4242 4242 4242 4242" maxLength={19} />
                     </div>
-                    <div className="ps-field">
-                      <label htmlFor="pp-expiry">Expiry (MM/YY)</label>
-                      <input id="pp-expiry" type="text" value={paymentForm.expiry}
-                        onChange={onPaymentChange('expiry')} placeholder="12/28" maxLength={5} />
+                    <div className="ps-field-row">
+                      <div className="ps-field">
+                        <label htmlFor="pp-expiry">Expiry (MM/YY)</label>
+                        <input id="pp-expiry" type="text" value={paymentForm.expiry}
+                          onChange={onPaymentChange('expiry')} placeholder="12/28" maxLength={5} />
+                      </div>
+                      <div className="ps-field">
+                        <label htmlFor="pp-cvc">CVC</label>
+                        <input id="pp-cvc" type="text" inputMode="numeric" value={paymentForm.cvc}
+                          onChange={(e) => setPaymentForm((p) => ({ ...p, cvc: e.target.value.replace(/\D/g, '').slice(0, 3) }))}
+                          placeholder="123" maxLength={3} />
+                      </div>
                     </div>
                     <div className="ps-edit-actions">
                       <button type="submit" className="ps-save-btn">Save</button>
@@ -249,24 +311,46 @@ function ProfilePage({ onNavigate }) {
                 {resCancelled ? (
                   <p className="pd-empty">No upcoming reservations.</p>
                 ) : (
-                  <div className="res-row">
-                    <div className="res-info">
-                      <p className="res-date">
-                        {MOCK_RESERVATION.date}&ensp;·&ensp;{MOCK_RESERVATION.time}
-                      </p>
-                      <ul className="res-meta">
-                        <li>{MOCK_RESERVATION.guests} Guests</li>
-                        <li>{MOCK_RESERVATION.seating}</li>
-                        <li>Ref: {MOCK_RESERVATION.id}</li>
-                      </ul>
+                  <>
+                    <div className="res-row">
+                      <div className="res-info">
+                        <p className="res-date">
+                          {MOCK_RESERVATION.date}&ensp;·&ensp;{MOCK_RESERVATION.time}
+                        </p>
+                        <ul className="res-meta">
+                          <li>{MOCK_RESERVATION.guests} Guests</li>
+                          <li>{MOCK_RESERVATION.seating}</li>
+                          <li>Ref: {MOCK_RESERVATION.id}</li>
+                        </ul>
+                      </div>
+                      <div className="res-actions">
+                        <span className="res-badge res-badge--confirmed">Confirmed</span>
+                        <button className="res-cancel-btn" onClick={() => setCancelConfirming(true)}>
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                    <div className="res-actions">
-                      <span className="res-badge res-badge--confirmed">Confirmed</span>
-                      <button className="res-cancel-btn" onClick={() => setResCancelled(true)}>
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
+
+                    {cancelConfirming && (
+                      <div className="res-cancel-confirm" role="alert">
+                        <p className="res-cancel-confirm-title">Cancel this reservation?</p>
+                        <p className="res-cancel-confirm-note">
+                          Cancellations are only accepted within 20 minutes of booking.
+                          After that, the reservation cannot be modified.
+                        </p>
+                        <div className="res-cancel-confirm-actions">
+                          <button className="res-cancel-confirm-yes"
+                            onClick={() => { setResCancelled(true); setCancelConfirming(false); }}>
+                            Yes, cancel it
+                          </button>
+                          <button className="res-cancel-confirm-no"
+                            onClick={() => setCancelConfirming(false)}>
+                            Keep reservation
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </section>
@@ -286,9 +370,15 @@ function ProfilePage({ onNavigate }) {
                           <span className="order-date">{order.date}</span>
                         </div>
                         <p className="order-total">{order.total}</p>
-                        <p className="order-items">{order.items.join('  ·  ')}</p>
+                        <p className="order-items">
+                          {order.cartItems.map(orderLabel).join('  ·  ')}
+                        </p>
                       </div>
-                      <button className="order-reorder-btn" onClick={() => onNavigate('menu')}>
+                      <button
+                        className="order-reorder-btn"
+                        onClick={() => reorder(buildCartItems(order.cartItems))}
+                        aria-label={`Reorder ${order.id}`}
+                      >
                         Reorder
                       </button>
                     </li>
