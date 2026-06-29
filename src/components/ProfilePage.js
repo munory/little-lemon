@@ -27,37 +27,58 @@ const MOCK_ORDERS = [
 function ProfilePage({ onNavigate }) {
   const { user, logout } = useAuth();
 
-  /* ── Edit-profile state ── */
-  const initial = {
+  /* ── Profile form ── */
+  const profileInit = {
     firstName: user?.firstName || '',
     lastName:  user?.lastName  || '',
     email:     user?.email     || '',
-    phone:     '',
+    phone:     user?.phone     || '',
   };
-  const [isEditing, setIsEditing]   = useState(false);
-  const [form,      setForm]        = useState(initial);
-  const [saved,     setSaved]       = useState(initial);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState(profileInit);
+  const [savedProfile, setSavedProfile] = useState(profileInit);
 
-  /* ── Reservation cancel state ── */
+  const onProfileChange = (field) => (e) =>
+    setProfileForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleProfileSave = () => { setSavedProfile({ ...profileForm }); setIsEditingProfile(false); };
+  const handleProfileCancel = () => { setProfileForm({ ...savedProfile }); setIsEditingProfile(false); };
+
+  /* ── Address form ── */
+  const addressInit = {
+    street: user?.address?.street || '',
+    apt:    user?.address?.apt    || '',
+  };
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [addressForm, setAddressForm] = useState(addressInit);
+  const [savedAddress, setSavedAddress] = useState(addressInit);
+
+  const onAddressChange = (field) => (e) =>
+    setAddressForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleAddressSave = () => { setSavedAddress({ ...addressForm }); setIsEditingAddress(false); };
+  const handleAddressCancel = () => { setAddressForm({ ...savedAddress }); setIsEditingAddress(false); };
+
+  /* ── Payment form ── */
+  const paymentInit = {
+    cardName:   user?.payment?.cardName   || '',
+    cardNumber: user?.payment?.cardNumber || '',
+    expiry:     user?.payment?.expiry     || '',
+  };
+  const [isEditingPayment, setIsEditingPayment] = useState(false);
+  const [paymentForm, setPaymentForm] = useState(paymentInit);
+  const [savedPayment, setSavedPayment] = useState(paymentInit);
+
+  const onPaymentChange = (field) => (e) =>
+    setPaymentForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handlePaymentSave = () => { setSavedPayment({ ...paymentForm }); setIsEditingPayment(false); };
+  const handlePaymentCancel = () => { setPaymentForm({ ...savedPayment }); setIsEditingPayment(false); };
+
+  /* ── Reservation cancel ── */
   const [resCancelled, setResCancelled] = useState(false);
 
-  const onChange = (field) => (e) =>
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-
-  const handleSave = () => {
-    setSaved({ ...form });
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setForm({ ...saved });
-    setIsEditing(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    onNavigate('home');
-  };
+  const handleLogout = () => { logout(); onNavigate('home'); };
 
   return (
     <main className="profile-dashboard">
@@ -68,74 +89,65 @@ function ProfilePage({ onNavigate }) {
         <div className="profile-dashboard-grid">
 
           {/* ═══════════════════════════════════
-              LEFT COLUMN — Profile + Address + Payment
+              LEFT COLUMN
           ═══════════════════════════════════ */}
           <div className="profile-left-col">
-          <section className="pd-card" aria-label="Profile settings">
-            <div className="pd-card-header">
-              <p className="pd-card-label">Profile Settings</p>
-            </div>
 
-            <div className="pd-card-body">
-              {/* Avatar + name */}
-              <div className="ps-avatar-row">
-                <div className="ps-avatar" aria-hidden="true">
-                  {(saved.firstName[0] || 'U').toUpperCase()}
-                </div>
-                <div>
-                  <p className="ps-display-name">{saved.firstName} {saved.lastName}</p>
-                  <p className="ps-member-since">Member since 2026</p>
-                </div>
+            {/* Card 1 — Profile Settings */}
+            <section className="pd-card" aria-label="Profile settings">
+              <div className="pd-card-header">
+                <p className="pd-card-label">Profile Settings</p>
               </div>
-
-              {/* Form */}
-              <form className="ps-form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
-                <div className="ps-field-row">
-                  <div className="ps-field">
-                    <label htmlFor="pf-first">First Name</label>
-                    <input id="pf-first" type="text" value={form.firstName}
-                      onChange={onChange('firstName')} disabled={!isEditing} />
+              <div className="pd-card-body">
+                <div className="ps-avatar-row">
+                  <div className="ps-avatar" aria-hidden="true">
+                    {(savedProfile.firstName[0] || 'U').toUpperCase()}
                   </div>
-                  <div className="ps-field">
-                    <label htmlFor="pf-last">Last Name</label>
-                    <input id="pf-last" type="text" value={form.lastName}
-                      onChange={onChange('lastName')} disabled={!isEditing} />
+                  <div>
+                    <p className="ps-display-name">{savedProfile.firstName} {savedProfile.lastName}</p>
+                    <p className="ps-member-since">Member since 2026</p>
                   </div>
                 </div>
 
-                <div className="ps-field">
-                  <label htmlFor="pf-email">Email</label>
-                  <input id="pf-email" type="email" value={form.email}
-                    onChange={onChange('email')} disabled={!isEditing} />
-                </div>
-
-                <div className="ps-field">
-                  <label htmlFor="pf-phone">Phone</label>
-                  <input id="pf-phone" type="tel" value={form.phone}
-                    placeholder={isEditing ? '+1 (312) 555-0000' : 'Not set'}
-                    onChange={onChange('phone')} disabled={!isEditing} />
-                </div>
-
-                {!isEditing ? (
-                  <button type="button" className="ps-edit-btn"
-                    onClick={() => setIsEditing(true)}>
-                    Edit Profile
-                  </button>
-                ) : (
-                  <div className="ps-edit-actions">
-                    <button type="submit" className="ps-save-btn">Save Changes</button>
-                    <button type="button" className="ps-cancel-btn" onClick={handleCancel}>
-                      Cancel
+                <form className="ps-form" onSubmit={(e) => { e.preventDefault(); handleProfileSave(); }}>
+                  <div className="ps-field-row">
+                    <div className="ps-field">
+                      <label htmlFor="pf-first">First Name</label>
+                      <input id="pf-first" type="text" value={profileForm.firstName}
+                        onChange={onProfileChange('firstName')} disabled={!isEditingProfile} />
+                    </div>
+                    <div className="ps-field">
+                      <label htmlFor="pf-last">Last Name</label>
+                      <input id="pf-last" type="text" value={profileForm.lastName}
+                        onChange={onProfileChange('lastName')} disabled={!isEditingProfile} />
+                    </div>
+                  </div>
+                  <div className="ps-field">
+                    <label htmlFor="pf-email">Email</label>
+                    <input id="pf-email" type="email" value={profileForm.email}
+                      onChange={onProfileChange('email')} disabled={!isEditingProfile} />
+                  </div>
+                  <div className="ps-field">
+                    <label htmlFor="pf-phone">Phone</label>
+                    <input id="pf-phone" type="tel" value={profileForm.phone}
+                      placeholder={isEditingProfile ? '+1 (312) 555-0000' : 'Not set'}
+                      onChange={onProfileChange('phone')} disabled={!isEditingProfile} />
+                  </div>
+                  {!isEditingProfile ? (
+                    <button type="button" className="ps-edit-btn" onClick={() => setIsEditingProfile(true)}>
+                      Edit Profile
                     </button>
-                  </div>
-                )}
-              </form>
+                  ) : (
+                    <div className="ps-edit-actions">
+                      <button type="submit" className="ps-save-btn">Save Changes</button>
+                      <button type="button" className="ps-cancel-btn" onClick={handleProfileCancel}>Cancel</button>
+                    </div>
+                  )}
+                </form>
 
-              <button className="ps-logout-btn" onClick={handleLogout}>
-                Log Out
-              </button>
-            </div>
-          </section>
+                <button className="ps-logout-btn" onClick={handleLogout}>Log Out</button>
+              </div>
+            </section>
 
             {/* Card 2 — Saved Address */}
             <section className="pd-card" aria-label="Saved address">
@@ -143,13 +155,32 @@ function ProfilePage({ onNavigate }) {
                 <p className="pd-card-label">Saved Address</p>
               </div>
               <div className="pd-card-body">
-                <div className="pd-info-row">
-                  <div className="pd-info-text">
-                    <p className="pd-info-primary">{user?.address?.street || '—'}</p>
-                    <p className="pd-info-secondary">{user?.address?.apt   || ''}</p>
+                {isEditingAddress ? (
+                  <form className="ps-form" onSubmit={(e) => { e.preventDefault(); handleAddressSave(); }}>
+                    <div className="ps-field">
+                      <label htmlFor="pa-street">Street Address</label>
+                      <input id="pa-street" type="text" value={addressForm.street}
+                        onChange={onAddressChange('street')} placeholder="1250 N Dearborn St" />
+                    </div>
+                    <div className="ps-field">
+                      <label htmlFor="pa-apt">Apt / Suite</label>
+                      <input id="pa-apt" type="text" value={addressForm.apt}
+                        onChange={onAddressChange('apt')} placeholder="Apt 4B" />
+                    </div>
+                    <div className="ps-edit-actions">
+                      <button type="submit" className="ps-save-btn">Save</button>
+                      <button type="button" className="ps-cancel-btn" onClick={handleAddressCancel}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="pd-info-row">
+                    <div className="pd-info-text">
+                      <p className="pd-info-primary">{savedAddress.street || '—'}</p>
+                      <p className="pd-info-secondary">{savedAddress.apt}</p>
+                    </div>
+                    <button className="pd-ghost-btn" onClick={() => setIsEditingAddress(true)}>Edit</button>
                   </div>
-                  <button className="pd-ghost-btn">Edit</button>
-                </div>
+                )}
               </div>
             </section>
 
@@ -159,24 +190,49 @@ function ProfilePage({ onNavigate }) {
                 <p className="pd-card-label">Payment Methods</p>
               </div>
               <div className="pd-card-body">
-                <div className="pd-info-row">
-                  <div className="pd-info-text pd-info-card">
-                    <span className="pd-card-chip" aria-hidden="true">
-                      <svg width="28" height="20" viewBox="0 0 32 22" fill="none" aria-hidden="true">
-                        <rect width="32" height="22" rx="3" fill="#1a1f71"/>
-                        <rect x="1" y="7" width="30" height="8" fill="#f7b600"/>
-                        <text x="16" y="18" fontSize="6" fill="#fff" textAnchor="middle" fontFamily="sans-serif" fontWeight="bold">VISA</text>
-                      </svg>
-                    </span>
-                    <div>
-                      <p className="pd-info-primary">Visa ending in {user?.payment?.cardNumber?.slice(-4) || '4242'}</p>
-                      <p className="pd-info-secondary">Expires {user?.payment?.expiry || '12/28'}</p>
+                {isEditingPayment ? (
+                  <form className="ps-form" onSubmit={(e) => { e.preventDefault(); handlePaymentSave(); }}>
+                    <div className="ps-field">
+                      <label htmlFor="pp-name">Cardholder Name</label>
+                      <input id="pp-name" type="text" value={paymentForm.cardName}
+                        onChange={onPaymentChange('cardName')} placeholder="Mario Rossi" />
                     </div>
+                    <div className="ps-field">
+                      <label htmlFor="pp-number">Card Number</label>
+                      <input id="pp-number" type="text" value={paymentForm.cardNumber}
+                        onChange={onPaymentChange('cardNumber')} placeholder="4242 4242 4242 4242" maxLength={19} />
+                    </div>
+                    <div className="ps-field">
+                      <label htmlFor="pp-expiry">Expiry (MM/YY)</label>
+                      <input id="pp-expiry" type="text" value={paymentForm.expiry}
+                        onChange={onPaymentChange('expiry')} placeholder="12/28" maxLength={5} />
+                    </div>
+                    <div className="ps-edit-actions">
+                      <button type="submit" className="ps-save-btn">Save</button>
+                      <button type="button" className="ps-cancel-btn" onClick={handlePaymentCancel}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="pd-info-row">
+                    <div className="pd-info-text pd-info-card">
+                      <span className="pd-card-chip" aria-hidden="true">
+                        <svg width="28" height="20" viewBox="0 0 32 22" fill="none" aria-hidden="true">
+                          <rect width="32" height="22" rx="3" fill="#1a1f71"/>
+                          <rect x="1" y="7" width="30" height="8" fill="#f7b600"/>
+                          <text x="16" y="18" fontSize="6" fill="#fff" textAnchor="middle" fontFamily="sans-serif" fontWeight="bold">VISA</text>
+                        </svg>
+                      </span>
+                      <div>
+                        <p className="pd-info-primary">Visa ending in {savedPayment.cardNumber?.slice(-4) || '4242'}</p>
+                        <p className="pd-info-secondary">Expires {savedPayment.expiry}</p>
+                      </div>
+                    </div>
+                    <button className="pd-ghost-btn" onClick={() => setIsEditingPayment(true)}>Edit</button>
                   </div>
-                  <button className="pd-ghost-btn">Edit</button>
-                </div>
+                )}
               </div>
             </section>
+
           </div>{/* /profile-left-col */}
 
           {/* ═══════════════════════════════════
@@ -206,8 +262,7 @@ function ProfilePage({ onNavigate }) {
                     </div>
                     <div className="res-actions">
                       <span className="res-badge res-badge--confirmed">Confirmed</span>
-                      <button className="res-cancel-btn"
-                        onClick={() => setResCancelled(true)}>
+                      <button className="res-cancel-btn" onClick={() => setResCancelled(true)}>
                         Cancel
                       </button>
                     </div>
@@ -233,8 +288,7 @@ function ProfilePage({ onNavigate }) {
                         <p className="order-total">{order.total}</p>
                         <p className="order-items">{order.items.join('  ·  ')}</p>
                       </div>
-                      <button className="order-reorder-btn"
-                        onClick={() => onNavigate('menu')}>
+                      <button className="order-reorder-btn" onClick={() => onNavigate('menu')}>
                         Reorder
                       </button>
                     </li>
