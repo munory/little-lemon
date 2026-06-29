@@ -1,70 +1,149 @@
-# Getting Started with Create React App
+# Little Lemon — Restaurant Web App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A responsive React web application for **Little Lemon**, a family-owned Mediterranean restaurant in Chicago. Built as the capstone project for the Meta Front-End Developer Professional Certificate.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Home page** — Hero section, weekly specials with dish cards, testimonials carousel, about section
+- **Online Menu** — Filterable menu with categories, dish detail modal, add-to-cart
+- **Shopping Cart** — Slide-in drawer, quantity controls, live subtotal
+- **Checkout** — Delivery / Pickup toggle, address form, mock payment with live card preview, autofill for logged-in users
+- **Table Reservations** — Multi-step booking form with real-time API availability, summary step, confirmation page
+- **Mock Authentication** — Login modal, AuthContext, user avatar dropdown (desktop), slide-in drawer profile card (mobile)
+- **User Profile Dashboard** — Editable profile form, saved address, payment method card, reservation history, order history
+- **Fully responsive** — Mobile (≤767px), Tablet (768–1023px), Desktop (≥1024px)
+- **Accessible** — ARIA labels, roles, live regions, keyboard navigation (Escape closes modals/drawer)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+| Layer | Technology |
+|---|---|
+| UI Library | React 18 (Create React App) |
+| Styling | Standard CSS with custom properties |
+| State Management | React Context API + useReducer / useState |
+| Testing | Jest + React Testing Library |
+| Fonts | Markazi Text, Karla (Google Fonts) |
+| Icons | Inline SVG |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js ≥ 16
+- npm ≥ 8
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+```bash
+# 1. Clone the repository
+git clone https://github.com/munory/little-lemon.git
+cd little-lemon
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# 2. Install dependencies
+npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# 3. Start the development server
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The app will open at [http://localhost:3000](http://localhost:3000).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## Running Tests
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm test
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Runs all 53 unit tests in watch mode. To run once without watching:
 
-### Code Splitting
+```bash
+npm test -- --watchAll=false
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Test coverage includes
 
-### Analyzing the Bundle Size
+- `BookingForm` — rendering, HTML5 validation attributes, guests counter, Continue button logic
+- `BookingSummary` — displays correct reservation data
+- `BookingConfirmed` — renders confirmation details
+- `CartDrawer` — renders items, quantity controls, empty state
+- `CheckoutPage` — form validation, order total calculations
+- `CartContext` — add, remove, update quantity, clear cart
+- `bookingUtils` — `submitReservation` returns true on valid data
+- `App` — renders home page heading
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+src/
+├── assets/          # Images and logo
+├── components/      # React components
+│   ├── Header.js         # Fixed header, slide-in mobile drawer, desktop nav
+│   ├── Main.js           # Home page (hero, specials, testimonials, about)
+│   ├── MenuPage.js       # Full menu with filters and dish modals
+│   ├── CartDrawer.js     # Shopping cart slide-in drawer
+│   ├── ReservationFlow.js # Multi-step booking flow
+│   ├── BookingForm.js    # Step 1 — date/time/guests picker
+│   ├── BookingSummary.js # Step 2 — review and confirm
+│   ├── BookingConfirmed.js # Confirmation page
+│   ├── CheckoutPage.js   # Full checkout with payment
+│   ├── CheckoutSuccess.js # Order success screen
+│   ├── ProfilePage.js    # User account dashboard
+│   ├── LoginModal.js     # Mock authentication modal
+│   └── ...
+├── context/
+│   ├── AuthContext.js    # Authentication state (login / logout / user)
+│   └── CartContext.js    # Cart state (items / subtotal / drawer)
+├── data/
+│   └── menuData.js       # Menu items with categories, prices, images
+└── utils/
+    └── bookingUtils.js   # submitReservation API helper
+```
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Booking Form — Validation Rules
 
-### Deployment
+| Field | Rule |
+|---|---|
+| Date | Required; minimum = today |
+| Time | Required; options fetched from `fetchAPI(date)` |
+| Guests | Integer 1–20 |
+| Seating | Indoors / Outdoors (radio) |
+| Occasion | Optional dropdown |
+| Special Requests | Optional, max 500 characters |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The **Continue** button is disabled until date and time are both selected.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Authentication (Mock)
+
+Login accepts any email + password — no real backend. On login, the app uses a hardcoded Mario Rossi profile with mock address and payment data. Logged-in users get:
+
+- Avatar initials button in the desktop header with a dropdown menu
+- Profile card in the mobile drawer
+- Autofill prompt on the Checkout page (applies name, email, phone, address, card details with one click)
+
+---
+
+## Git History
+
+```
+2309a70  Add auth, user profile, mobile drawer, and checkout UX improvements
+853137d  Add menu page, shopping cart, and checkout flow
+9ba82e6  Improve accessibility and form validation
+ba6c7c3  Add API integration and unit tests
+bf4c043  Initial architecture and styling
+c1705f9  Add semantic structure and metadata
+8d34438  Initialize project using Create React App
+```
