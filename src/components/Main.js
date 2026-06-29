@@ -1,59 +1,18 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import restaurantFood from '../assets/restauranfood.jpg';
-import greekSalad from '../assets/greek salad.jpg';
-import bruchetta from '../assets/bruchetta.jpg';
-import lemonDessert from '../assets/lemon dessert.jpg';
 import marioA from '../assets/Mario and Adrian A.jpg';
 import marioB from '../assets/Mario and Adrian b.jpg';
 import photoMaria from '../assets/maria.jpg';
 import photoJohn from '../assets/jonh.jpeg';
 import photoAnna from '../assets/anna.jpg';
 import photoPeter from '../assets/peter.jpg';
-import SpecialModal from './SpecialModal';
+import DishModal from './DishModal';
 import TestimonialsCarousel from './TestimonialsCarousel';
+import menuData from '../data/menuData';
 
-const SPECIALS = [
-  {
-    id: 1,
-    name: 'Greek Salad',
-    price: 12.99,
-    image: greekSalad,
-    description: 'The famous greek salad of crispy lettuce, peppers, olives and our Chicago style feta cheese, garnished with crunchy garlic and rosemary croutons.',
-    addons: [
-      { id: 'feta',    label: 'Extra Feta',       extra: 1.50 },
-      { id: 'avocado', label: 'Avocado',           extra: 2.00 },
-      { id: 'chicken', label: 'Grilled Chicken',   extra: 3.00 },
-      { id: 'olives',  label: 'Kalamata Olives',   extra: 1.00 },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Bruschetta',
-    price: 5.99,
-    image: bruchetta,
-    description: 'Our Bruschetta is made from grilled bread that has been smeared with garlic and seasoned with salt and olive oil.',
-    addons: [
-      { id: 'tomatoes',    label: 'Sun-Dried Tomatoes', extra: 1.00 },
-      { id: 'basil',       label: 'Fresh Basil',        extra: 0.75 },
-      { id: 'mozzarella',  label: 'Mozzarella',         extra: 1.50 },
-      { id: 'prosciutto',  label: 'Prosciutto',         extra: 2.50 },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Lemon Dessert',
-    price: 5.00,
-    image: lemonDessert,
-    description: 'This comes straight from grandma\'s recipe book, every last ingredient has been sourced and is as authentic as you can imagine.',
-    addons: [
-      { id: 'cream',    label: 'Whipped Cream',      extra: 1.00 },
-      { id: 'icecream', label: 'Vanilla Ice Cream',  extra: 2.00 },
-      { id: 'curd',     label: 'Extra Lemon Curd',   extra: 1.50 },
-      { id: 'berries',  label: 'Mixed Berries',      extra: 1.50 },
-    ],
-  },
-];
+const SPECIAL_IDS = [103, 101, 106];
+const SPECIALS = SPECIAL_IDS.map((id) => menuData.find((d) => d.id === id));
 
 const TESTIMONIALS = [
   { id: 1, name: 'Maria',   photo: photoMaria,  rating: 5, review: 'Amazing food and atmosphere! The Greek salad is absolutely to die for.' },
@@ -123,7 +82,7 @@ function Main({ onReserve, onMenu }) {
       </section>
 
       {modalItem && (
-        <SpecialModal
+        <DishModal
           item={modalItem}
           onClose={() => setModalItem(null)}
           onAddToCart={addItem}

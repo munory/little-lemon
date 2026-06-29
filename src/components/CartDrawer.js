@@ -12,7 +12,7 @@ function TrashIcon() {
   );
 }
 
-function CartDrawer({ onCheckout }) {
+function CartDrawer({ onCheckout, onBrowseMenu }) {
   const { items, subtotal, isDrawerOpen, closeDrawer, removeItem, updateQty } = useCart();
   const asideRef = useRef(null);
 
@@ -63,6 +63,12 @@ function CartDrawer({ onCheckout }) {
               <span className="drawer-empty-icon" aria-hidden="true">🛒</span>
               <p>Your cart is empty</p>
               <span>Add items from the menu to get started</span>
+              <button
+                className="drawer-browse-btn"
+                onClick={() => { closeDrawer(); onBrowseMenu?.(); }}
+              >
+                Browse Menu
+              </button>
             </div>
           ) : (
             <ul className="drawer-item-list">

@@ -7,6 +7,12 @@ const menuData = [
     ingredients: 'Grilled bread, garlic, tomatoes, olive oil.',
     description: 'Our Bruschetta is made from grilled bread that has been smeared with garlic and seasoned with salt and olive oil.',
     image: require('../assets/bruchetta.jpg'),
+    addons: [
+      { id: 'tomatoes',   label: 'Sun-Dried Tomatoes', extra: 1.00 },
+      { id: 'basil',      label: 'Fresh Basil',         extra: 0.75 },
+      { id: 'mozzarella', label: 'Mozzarella',          extra: 1.50 },
+      { id: 'prosciutto', label: 'Prosciutto',          extra: 2.50 },
+    ],
   },
   {
     id: 102,
@@ -16,6 +22,12 @@ const menuData = [
     ingredients: 'Chickpeas, tahini, lemon, olive oil, warm pita.',
     description: 'Silky smooth traditional hummus served with warm, freshly baked pita bread and a drizzle of extra virgin olive oil.',
     image: require('../assets/Creamy Hummus & Pita.jpeg'),
+    addons: [
+      { id: 'extrahummus',  label: 'Extra Hummus',     extra: 1.00 },
+      { id: 'jalapeno',     label: 'Jalapeños',         extra: 0.75 },
+      { id: 'falafel',      label: 'Falafel (3 pcs)',  extra: 2.00 },
+      { id: 'pitaupgrade',  label: 'Pita Upgrade',     extra: 0.50 },
+    ],
   },
   {
     id: 103,
@@ -25,6 +37,12 @@ const menuData = [
     ingredients: 'Crispy lettuce, peppers, olives, feta cheese, garlic croutons.',
     description: 'The famous greek salad of crispy lettuce, peppers, olives and our Chicago style feta cheese, garnished with crunchy garlic and rosemary croutons.',
     image: require('../assets/greek salad.jpg'),
+    addons: [
+      { id: 'feta',    label: 'Extra Feta',      extra: 1.50 },
+      { id: 'avocado', label: 'Avocado',          extra: 2.00 },
+      { id: 'chicken', label: 'Grilled Chicken',  extra: 3.00 },
+      { id: 'olives',  label: 'Kalamata Olives',  extra: 1.00 },
+    ],
   },
   {
     id: 104,
@@ -34,6 +52,12 @@ const menuData = [
     ingredients: 'Linguine, tiger shrimp, garlic, lemon butter, parsley.',
     description: 'Al dente linguine tossed in a rich, zesty lemon-garlic butter sauce, topped with pan-seared tiger shrimp.',
     image: require('../assets/shrimp pasta.jpeg'),
+    addons: [
+      { id: 'extrashrimp', label: 'Extra Shrimp',        extra: 4.00 },
+      { id: 'parmesan',    label: 'Parmesan',             extra: 1.00 },
+      { id: 'chili',       label: 'Chili Flakes',         extra: 0.50 },
+      { id: 'garlicbread', label: 'Garlic Bread',         extra: 1.50 },
+    ],
   },
   {
     id: 105,
@@ -43,6 +67,12 @@ const menuData = [
     ingredients: 'Chicken breast, oregano, tzatziki, roasted vegetables.',
     description: 'Tender marinated chicken breast grilled to perfection, served with house-made tzatziki and seasonal roasted veggies.',
     image: require('../assets/Grilled Chicken.jpeg'),
+    addons: [
+      { id: 'tzatziki', label: 'Extra Tzatziki',       extra: 1.00 },
+      { id: 'potatoes', label: 'Roasted Potatoes',     extra: 2.00 },
+      { id: 'salad',    label: 'Side Salad',            extra: 2.50 },
+      { id: 'veggies',  label: 'Extra Grilled Veggies', extra: 1.50 },
+    ],
   },
   {
     id: 106,
@@ -52,6 +82,12 @@ const menuData = [
     ingredients: 'Lemon zest, mascarpone, sponge cake, icing.',
     description: "This comes straight from grandma's recipe book, every last ingredient has been sourced and is as authentic as you can imagine.",
     image: require('../assets/lemon dessert.jpg'),
+    addons: [
+      { id: 'cream',    label: 'Whipped Cream',     extra: 1.00 },
+      { id: 'icecream', label: 'Vanilla Ice Cream',  extra: 2.00 },
+      { id: 'curd',     label: 'Extra Lemon Curd',   extra: 1.50 },
+      { id: 'berries',  label: 'Mixed Berries',       extra: 1.50 },
+    ],
   },
   {
     id: 107,
@@ -61,6 +97,11 @@ const menuData = [
     ingredients: 'Phyllo dough, chopped pistachios, honey syrup.',
     description: 'A rich, sweet dessert pastry made of layers of phyllo filled with chopped nuts and sweetened with authentic Mediterranean honey.',
     image: require('../assets/Pistachio Baklava.jpeg'),
+    addons: [
+      { id: 'honey',     label: 'Extra Honey',        extra: 0.75 },
+      { id: 'cream',     label: 'Clotted Cream',       extra: 1.50 },
+      { id: 'pistachio', label: 'Pistachio Sprinkle',  extra: 1.00 },
+    ],
   },
   {
     id: 108,
@@ -70,6 +111,11 @@ const menuData = [
     ingredients: 'Fresh lemons, mint leaves, cane sugar, sparkling water.',
     description: 'Our signature refreshing lemonade, squeezed to order and infused with crushed fresh mint.',
     image: require('../assets/fresh mint lemonade.jpeg'),
+    addons: [
+      { id: 'mint',        label: 'Extra Mint',        extra: 0.50 },
+      { id: 'ginger',      label: 'Ginger Shot',        extra: 1.00 },
+      { id: 'elderflower', label: 'Elderflower Syrup',  extra: 0.75 },
+    ],
   },
   {
     id: 109,
@@ -79,6 +125,11 @@ const menuData = [
     ingredients: 'Limoncello, Prosecco, soda water, lemon wheel.',
     description: 'A vibrant and refreshing Italian cocktail. Perfect for a warm summer evening on our patio.',
     image: require('../assets/Classic Limoncello.jpeg'),
+    addons: [
+      { id: 'extralimoncello', label: 'Extra Limoncello',  extra: 2.00 },
+      { id: 'soda',            label: 'Club Soda Top-up',  extra: 0.50 },
+      { id: 'lemontwist',      label: 'Fresh Lemon Twist', extra: 0.75 },
+    ],
   },
 ];
 

@@ -1,17 +1,41 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const TAX_RATE  = 0.08;
 const DELIVERY_FEE = 5.00;
 
 function CheckoutPage({ onSuccess, onBack }) {
   const { items, subtotal, clearCart } = useCart();
+  const { isLoggedIn, user } = useAuth();
 
   const [orderMethod, setOrderMethod] = useState('delivery');
   const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '' });
   const [address, setAddress] = useState({ street: '', apt: '', instructions: '' });
   const [payment, setPayment] = useState({ cardholderName: '', cardNumber: '', expiry: '', cvc: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [autofillDismissed, setAutofillDismissed] = useState(false);
+
+  const handleAutofill = useCallback(() => {
+    setContact({
+      firstName: user?.firstName || '',
+      lastName:  user?.lastName  || '',
+      email:     user?.email     || '',
+      phone:     user?.phone     || '',
+    });
+    setAddress({
+      street:       user?.address?.street || '',
+      apt:          user?.address?.apt    || '',
+      instructions: '',
+    });
+    setPayment({
+      cardholderName: user?.payment?.cardName   || '',
+      cardNumber:     user?.payment?.cardNumber || '',
+      expiry:         user?.payment?.expiry     || '',
+      cvc:            '',
+    });
+    setAutofillDismissed(true);
+  }, [user]);
 
   const isDelivery  = orderMethod === 'delivery';
   const deliveryFee = isDelivery ? DELIVERY_FEE : 0;
@@ -63,6 +87,27 @@ function CheckoutPage({ onSuccess, onBack }) {
         {/* ── Left column ── */}
         <div className="checkout-left">
           <h1 className="checkout-title">Checkout</h1>
+
+          {/* Autofill prompt — logged-in users only */}
+          {isLoggedIn && !autofillDismissed && (
+            <div className="co-autofill-prompt" role="region" aria-label="Autofill suggestion">
+              <div className="co-autofill-avatar" aria-hidden="true">
+                {user.firstName[0].toUpperCase()}
+              </div>
+              <div className="co-autofill-info">
+                <p className="co-autofill-name">{user.firstName} {user.lastName}</p>
+                <p className="co-autofill-detail">{user.email}</p>
+              </div>
+              <div className="co-autofill-actions">
+                <button className="co-autofill-apply" onClick={handleAutofill}>
+                  Apply my details
+                </button>
+                <button className="co-autofill-skip" onClick={() => setAutofillDismissed(true)}>
+                  Skip
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* A — Order Method */}
           <section className="co-card" aria-labelledby="co-method-heading">

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
@@ -9,6 +10,7 @@ import BookingConfirmed from './components/BookingConfirmed';
 import CheckoutPage from './components/CheckoutPage';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import MenuPage from './components/MenuPage';
+import ProfilePage from './components/ProfilePage';
 import CartDrawer from './components/CartDrawer';
 import CartToast from './components/CartToast';
 import { submitReservation } from './utils/bookingUtils';
@@ -16,6 +18,10 @@ import { submitReservation } from './utils/bookingUtils';
 function App() {
   const [page, setPage] = useState('home');
   const [confirmedData, setConfirmedData] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [page]);
 
   const handleReservationComplete = (fullData) => {
     const success = submitReservation(fullData);
@@ -28,6 +34,7 @@ function App() {
   const showFooter = page !== 'checkout' && page !== 'checkout-success' && page !== 'menu';
 
   return (
+    <AuthProvider>
     <CartProvider>
       <Header onNavigate={setPage} currentPage={page} />
 
@@ -65,10 +72,15 @@ function App() {
         <CheckoutSuccess onBackHome={() => setPage('home')} />
       )}
 
-      {showFooter && <Footer />}
-      <CartDrawer onCheckout={() => setPage('checkout')} />
+      {page === 'profile' && (
+        <ProfilePage onNavigate={setPage} />
+      )}
+
+      {showFooter && <Footer onNavigate={setPage} />}
+      <CartDrawer onCheckout={() => setPage('checkout')} onBrowseMenu={() => setPage('menu')} />
       <CartToast />
     </CartProvider>
+    </AuthProvider>
   );
 }
 

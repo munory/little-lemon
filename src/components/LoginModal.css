@@ -1,0 +1,40 @@
+.login-modal {
+  max-width: 420px;
+}
+
+.login-modal-body {
+  padding: 44px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.login-modal-title {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--color-dark);
+  line-height: 1;
+}
+
+.login-modal-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn-login-submit {
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  background-color: var(--color-yellow);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 800;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.btn-login-submit:hover { background-color: #e0bc10; }

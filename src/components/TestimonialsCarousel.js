@@ -22,13 +22,17 @@ function TestimonialsCarousel({ items, title }) {
   const trackRef   = useRef(null);
   const snapTimer  = useRef(null);
 
-  // Detect how many cards fit (1 on mobile, 3 on desktop)
+  // Detect how many cards fit: 1 mobile, 2 tablet, 3 desktop
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
-    const update = (e) => setPerView(e.matches ? 1 : 3);
-    update(mq);
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 768)  setPerView(1);
+      else if (w < 1024) setPerView(2);
+      else setPerView(3);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
 
   const pageCount = Math.max(1, items.length - perView + 1);

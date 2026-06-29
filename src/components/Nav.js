@@ -1,4 +1,4 @@
-function Nav({ onNavigate, currentPage }) {
+function Nav({ onNavigate, onOrderOnline, currentPage }) {
   const handle = (e, page) => {
     e.preventDefault();
     if (onNavigate && page) onNavigate(page);
@@ -13,7 +13,10 @@ function Nav({ onNavigate, currentPage }) {
           <a className="nav-link" href="#" onClick={(e) => handle(e, 'home')}
             aria-current={isCurrent('home') ? 'page' : undefined}>Home</a>
         </li>
-        <li><a className="nav-link" href="#about" onClick={(e) => { if (currentPage !== 'home') { e.preventDefault(); onNavigate('home'); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 100); } }}>About</a></li>
+        <li>
+          <a className="nav-link" href="#about"
+            onClick={(e) => { e.preventDefault(); onNavigate('about'); }}>About</a>
+        </li>
         <li>
           <a className="nav-link" href="#" onClick={(e) => handle(e, 'menu')}
             aria-current={isCurrent('menu') ? 'page' : undefined}>Menu</a>
@@ -22,8 +25,10 @@ function Nav({ onNavigate, currentPage }) {
           <a className="nav-link" href="#" onClick={(e) => handle(e, 'booking')}
             aria-current={isCurrent('booking') ? 'page' : undefined}>Reservations</a>
         </li>
-        <li><a className="nav-link" href="#">Order Online</a></li>
-        <li><a className="nav-link" href="#">Login</a></li>
+        <li>
+          <a className="nav-link" href="#"
+            onClick={(e) => { e.preventDefault(); onOrderOnline?.(); }}>Order Online</a>
+        </li>
       </ul>
     </nav>
   );

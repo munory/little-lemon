@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookingForm from './BookingForm';
 import BookingSummary from './BookingSummary';
 
@@ -15,6 +15,10 @@ function ReservationFlow({ onComplete, onCancel }) {
 
   // Step 2 state — same reason
   const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '' });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [step]);
 
   const step1Data = { date, time, guests, seating, occasion, specialRequests };
 
